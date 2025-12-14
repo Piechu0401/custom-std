@@ -14,19 +14,19 @@
 #endif
 
 #ifndef KiloByte
-    #define KiloByte Byte << 10
+    #define KiloByte (Byte << 10)
 #endif
 
 #ifndef MegaByte
-    #define MegaByte Byte << 20
+    #define MegaByte (Byte << 20)
 #endif
 
 #ifndef GigaByte
-    #define GigaByte Byte << 30
+    #define GigaByte (Byte << 30)
 #endif
 
 #ifndef TeraByte
-    #define TeraByte Byte << 40
+    #define TeraByte (Byte << 40)
 #endif
 
 #ifndef SIZE_VAR__
@@ -55,6 +55,7 @@
 
     #define MMAP_LIMIT_BITS_SIZE ((1 << 8) * KiloByte) // maybe will shrink it later
     #define MALLOC_PROT PROT_READ | PROT_WRITE
+    #define MIN_MEM (1 << 12)
 
 #elif defined(__WIN32) || defined(__WIN64)
     #include <windows.h>

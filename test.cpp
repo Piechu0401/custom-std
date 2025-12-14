@@ -1,26 +1,15 @@
 #include <stdio.h>
-#include "Memory.h"
+#include <stdlib.h>
 
-// my notes
-// g++ -g -O0 [...] -o test
+int main() {
+    char* p = (char*)malloc(10);
 
-int main(
-    int ArgCount,
-    const char* ArgValues[]
-) {
-    Size s = 5;
-    int* lol = (int*)MyStd::Malloc(
-        s * sizeof(int)
-    );
-
-    for(
-        auto i{0u}; i < s; i++
-    )   {
-        lol[i] = i;
-        printf(
-            "%i\n",
-            lol[i]
-        );
+    for (int i = 0; i < 1000; i++) {
+        p[i] = 'A';   // WYJŚCIE DALEKO POZA 10
     }
 
+    printf("still alive: %c\n", p[500]);
+
+    free(p);
+    return 0;
 }

@@ -1,6 +1,4 @@
 #include "Memory.h"
-#include <sys/mman.h>
-#include <sys/syscall.h>
 
 namespace MyStd {
     vPtr __MEM_LIST::ChunkRequest(
@@ -31,65 +29,48 @@ namespace MyStd {
             __size__ == 0
         ) return NULL_PTR__;
 
-        __MEM_LIST* Chunk = (__MEM_LIST*)__mem_list->ChunkRequest(
-            __size__
+        Size Bullshit = 
+            __size__ + sizeof(Size);
+
+        //round bullshit 
+        Size RoundedBullshit = 
+            ( __size__ + MIN_MEM - 1 ) & ~( MIN_MEM - 1 );
+
+        Size TotalBullshit = 
+            MIN_MEM + RoundedBullshit + MIN_MEM;
+
+        int __flags = MAP_ANON | MAP_PRIVATE;
+
+        vPtr NewChunk = (vPtr)syscall( 
+            SYS_mmap,
+            NULL_PTR__,
+            TotalBullshit,
+            MALLOC_PROT,
+            __flags,
+            -1,
+            0
         );
-        
+
         if(
-            !Chunk
-        ) {
-            const Size TotalSize = __MEM_LIST_BLOCK_SIZE + __size__;
-            
-            #if defined(__linux__)
-                if(
-                    __size__ < MMAP_LIMIT_BITS_SIZE
-                ) {
-                    vPtr Old = (vPtr)syscall(
-                        SYS_brk,
-                        0
-                    );
-                    vPtr New = (char*)Old + TotalSize;
+            NewChunk == MAP_FAILED
+        ) return NULL_PTR__;
 
-                    if(
-                        (vPtr)syscall(
-                            SYS_brk,
-                            New
-                        ) != New
-                    ) return NULL_PTR__;
+        mprotect(
+            NewChunk,
+            MIN_MEM,
+            PROT_NONE
+        );
 
-                    Chunk = (__MEM_LIST*)Old;
-                    Chunk->__size = __size__;
-                    Chunk->__next = NULL_PTR__;
-                    Chunk->__free = 0;
+        mprotect(
+            (char*)NewChunk + MIN_MEM + RoundedBullshit,
+            MIN_MEM,
+            PROT_NONE
+        );
 
-                }
+        vPtr HeaderMotherfucker = (char*)NewChunk + MIN_MEM;
+        *(Size*) HeaderMotherfucker = __size__;
 
-                // I think its valid
-
-                int flags  =\
-                    (__size__ > (4LU * GigaByte)) ?\
-                    MAP_PRIVATE | MAP_ANONYMOUS | MAP_ABOVE4G :\
-                    MAP_PRIVATE | MAP_ANONYMOUS;
-
-                vPtr Chunk = (vPtr)syscall(
-                    SYS_mmap,
-                    Chunk,
-                    TotalSize,
-                    MALLOC_PROT,
-                    flags,
-                    -1,
-                    0
-                );
-
-                if(
-                    Chunk == MAP_FAILED
-                ) return NULL_PTR__;
-
-            #endif
-
-        }
-
-        return ((char*)(Chunk) + 1);
+        return (vPtr)((char*)HeaderMotherfucker + sizeof(Size));
 
     }
 
