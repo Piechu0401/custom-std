@@ -1,0 +1,53 @@
+#ifndef                     __CORE_H
+#define                     __CORE_H
+
+// limits of those fuckers
+
+#define MAX_UINT8           (1 << 8)
+#define MAX_UINT16          (1 << 16)
+#define MAX_UINT32          (1 << 32)
+#define MAX_UINT64          ((((1 << 63) - 1) << 1) + 1)
+#define MAX_INT8            (1 << 7)
+#define MAX_INT16           (1 << 15)
+#define MAX_INT32           (1 << 31)
+#define MAX_INT64           (1 << 63)
+#define MAX_INTN(N)        ( N <= 63 ) ? (1 << N) : 0
+
+// numeric types and shit
+
+typedef unsigned char               uint8;
+typedef unsigned short              uint16;
+typedef unsigned int                uint32;
+typedef unsigned long               uint64;
+typedef signed char                 int8;
+typedef signed short                int16;
+typedef signed int                  int32;
+typedef signed long                 int64;
+
+// my typedefs, not necessary, im just lazy
+
+typedef unsigned int                size;
+typedef void*                       vPtr;
+typedef unsigned long               uPtr;
+typedef uint32                      Bool;
+
+#define True                        1
+#define False                       0
+#define NULL_PTR__ ((void*)(0))
+
+#if defined(__linux__)
+    #include <unistd.h>
+    #include <sys/syscall.h>
+#endif
+
+// some macros like mac and cheese hehe... yeah I better stfu
+#define Align(Size, Align)          ( ( Size + Align - 1 ) & ~( Align - 1 ) )
+#define Floor(N)                    ( (int)(N) )
+#define Ceil(N)                     ( (int)( N + 1 ) )
+#define MaxUintN(N)                 ( (unsigned char)(N) < 64 ) ? ( 1 << (unsigned char)(N) ) : 0
+
+void ReadCall();
+void WriteCall();
+void ThreadCall();
+
+#endif
