@@ -5,17 +5,17 @@
 
 int main() {
     size a = 5;
-    int* A = (int*)Alloc(
+    int* takichuj = (int*)Alloc(
         a * sizeof(int)
     );
 
     if(
-        A == NULL_PTR__
+        takichuj == NULL_PTR__
     ) printf("chuj");
 
     printf(
         "%i\n",
-        A[1024]
+        takichuj[10000]
     );
 
     return 0;

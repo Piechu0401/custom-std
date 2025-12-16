@@ -5,6 +5,7 @@
 extern "C" {
 #endif
 
+#include <stdio.h>
 #include "core.h"
 
 #define __byte                                  1
@@ -24,6 +25,8 @@ typedef enum __ALLOC_TYPE {
 typedef struct __MEMORY_BLOCK {
     struct __MEMORY_BLOCK*                      __prevMotherfucker__;
     struct __MEMORY_BLOCK*                      __nextMotherfucker__;
+    uint32*                                     __memSrart__;
+    uint32*                                     __memEnd__;
     size                                        __size__;
     Bool                                        __free__;
     __ALLOC_TYPE_T                              __type__;
@@ -31,6 +34,7 @@ typedef struct __MEMORY_BLOCK {
 } __MEMORY_BLOCK_T;
 
 #define __BLOCK_SIZE                            sizeof(__MEMORY_BLOCK_T)
+#define __BLOCK_GUARD                           0xDEADBEEF
 #define __BYTE_SIZE                             (__byte * (1 << 3))
 #define __HEAP_ALLOC_LIMIT                      (__kilobyte * (1 << 7))
 

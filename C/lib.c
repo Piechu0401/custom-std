@@ -1,5 +1,6 @@
 #include "lib.h"
 #include "core.h"
+#include <asm/unistd_64.h>
 #include <sys/mman.h>
 #include <unistd.h>
 
@@ -63,18 +64,33 @@ vPtr Alloc(
             !__stackGangsta__
         )   {
             __brkLocation__ = 
-                sbrk( 0 );
+                (vPtr)syscall(
+                    __NR_brk, 
+                    0
+                );
 
             if(
-                sbrk(    
-                    __neededRoomForShit__
+                (vPtr)syscall(
+                    __NR_brk,    
+                    (char*)__brkLocation__ + __neededRoomForShit__
                 ) == __ALLOC_FAILED
             ) return NULL_PTR__;
 
             vPtr __tempBrk__ = 
-                sbrk( 0 );
+                (vPtr)syscall(
+                    __NR_brk, 
+                    0
+                );
 
             __stackGangsta__ = __brkLocation__;
+            __stackGangsta__->__memSrart__ =
+                (uint32*)__stackGangsta__;
+            *__stackGangsta__->__memSrart__ = 
+                __BLOCK_GUARD;
+            __stackGangsta__->__memEnd__ = 
+                (uint32*)((uint32*)((char*)__stackGangsta__ + __neededRoomForShit__ - __BLOCK_SIZE));
+            *__stackGangsta__->__memEnd__ =
+                __BLOCK_GUARD;
             __stackGangsta__->__prevMotherfucker__ = 
                 NULL_PTR__;
             __stackGangsta__->__nextMotherfucker__ = 
@@ -94,7 +110,10 @@ vPtr Alloc(
         } else {
             __MEMORY_BLOCK_T* __newCunt__;
             __brkLocation__ = 
-                    sbrk( 0 );
+                (vPtr)syscall(
+                    __NR_brk, 
+                    0
+                );
 
             __MEMORY_BLOCK_T* __request__ = ChunkRequest(
                 __neededRoomForShit__
@@ -104,7 +123,10 @@ vPtr Alloc(
                 !__request__
             ) {
                 vPtr __tempBrk__ = 
-                    sbrk( __neededRoomForShit__ );
+                    (vPtr)syscall(
+                        __NR_brk, 
+                        (char*)__brkLocation__ + __neededRoomForShit__
+                    );
                 
                 if(
                     __tempBrk__ == __ALLOC_FAILED
