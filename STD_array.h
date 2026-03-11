@@ -29,6 +29,8 @@ namespace STD {
                 __data = __Data;
             }
 
+            ~Array() noexcept { delete __data; }
+
             inline const bool operator==( const Array& __Other ) noexcept { return __Other == this; };
             
             inline const Array& operator=( const Array& __Other ) noexcept {
